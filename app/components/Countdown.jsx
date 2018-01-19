@@ -12,6 +12,7 @@ var Countdown = React.createClass({
       };
     },
 
+	// Called right after an update
 	componentDidUpdate: function(prevProps, prevState) {
     	if(this.state.countdownStatus !== prevState.countdownStatus) {
     		switch(this.state.countdownStatus) {
@@ -21,20 +22,33 @@ var Countdown = React.createClass({
 			    case 'stopped':
 			    	this.setState({count: 0});
 			    case 'paused':
-			    	clearInterval(this.Timer);
+			    	clearInterval(this.timer);
 			    	this.timer = undefined;
 			    	break;
 		    }
 	    }
 	},
 
+
+
+	// Gets called when we leave component
+	componentWillUnmount: function() {
+        clearInterval(this.timer);
+        this.timer = undefined;
+	},
+
 	startTimer: function() {
-    	this.Timer = setInterval(() => {
+    	this.timer = setInterval(() => {
     		var newCount = this.state.count - 1;
     		console.log('count = ' + newCount);
     		this.setState({
 			    count: newCount >= 0 ? newCount : 0
 		    });
+
+    		if(newCount === 0) {
+    			this.setState({countdownStatus: 'stopped'});
+		    }
+
 	    }, 1000);
 	},
 
